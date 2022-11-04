@@ -15,11 +15,7 @@ def closure(line, cell):
     """
     ip = get_ipython()
     func_name = "_closure_magic_f"
-    block = '\n'.join([
-        "def %s():" % func_name,
-        indent(cell),
-        "%s()" % func_name
-    ])
+    block = '\n'.join([f"def {func_name}():", indent(cell), f"{func_name}()"])
     ip.run_cell(block)
     ip.user_ns.pop(func_name, None)
 

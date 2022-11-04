@@ -29,16 +29,16 @@ def functionize(line):
     splits = line.split(' ', 1)
     range_str = splits[0]
     args = splits[1] if len(splits) > 1 else ''
-    
+
     ranges = parse_ranges(range_str)
     get_range = shell.history_manager.get_range
-    
-    blocks = ["def cell_function(%s):" % args]
+
+    blocks = [f"def cell_function({args}):"]
     for start, stop in ranges:
         cursor = get_range(0, start, stop)
         for session_id, cell_id, code in cursor:
             blocks.append(indent(code))
-    
+
     code = '\n'.join(blocks)
     shell.set_next_input(code)
 

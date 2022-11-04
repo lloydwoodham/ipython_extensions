@@ -41,7 +41,7 @@ class SolutionInputTransformer(InputTransformer):
         try:
             return template.render(solution=True)
         except Exception as e:
-            print("Failed to render jinja template: %s" % e, file=sys.stderr)
+            print(f"Failed to render jinja template: {e}", file=sys.stderr)
             return text
 
 

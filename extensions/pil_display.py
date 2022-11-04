@@ -35,7 +35,7 @@ def array2imgdata_fs(A, format='PNG'):
     This is much faster than in-memory conversion with PIL on the rPi for some reason.
     """
     import cv2
-    fname = os.path.join(tempfile.gettempdir(), "_ipdisplay.%s" % format)
+    fname = os.path.join(tempfile.gettempdir(), f"_ipdisplay.{format}")
     cv2.imwrite(fname, A)
     with open(fname) as f:
         data = f.read()

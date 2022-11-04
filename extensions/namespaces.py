@@ -38,10 +38,7 @@ aliases = {
 
 def import_ns(d):
     """turn a dict of import strings into a dict of objects"""
-    ns = {}
-    for key, s in d.items():
-        ns[key] = import_item(s)
-    return ns
+    return {key: import_item(s) for key, s in d.items()}
 
 def load_namespace(names):
     """Load one or more predefined namespace
