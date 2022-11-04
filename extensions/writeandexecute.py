@@ -82,10 +82,10 @@ class WriteAndExecuteMagics(Magics):
         opts,args = self.parse_options(parameter_s,'i:d')
         if cell is None:
             raise UsageError('Nothing to save!')
-        if not ('i' in opts) or not opts['i']:
+        if 'i' not in opts or not opts['i']:
             raise UsageError('Missing indentifier: include "-i=<indentifier>"')
         identifier = opts['i']
-        debug = False if not "d" in opts else True
+        debug = "d" in opts
         if not args:
             raise UsageError('Missing filename')
         filename = args
@@ -101,57 +101,57 @@ class WriteAndExecuteMagics(Magics):
             os.makedirs(d)  
             
     def _save_to_file(self, path, identifier, content, debug=False):
-            pypath = os.path.splitext(path)[0] + '.py'
-            code_identifier = "# -- ==%s== --" % identifier
-            new_content = []
-            if not os.path.isfile(pypath):
+        pypath = f'{os.path.splitext(path)[0]}.py'
+        code_identifier = f"# -- =={identifier}== --"
+        new_content = []
+        if not os.path.isfile(pypath):
                 # The file does not exist, so simple create a new one
-                if debug:
-                    print("Created new file: %s" % pypath)
-                new_content.extend([u'# -*- coding: utf-8 -*-\n\n', code_identifier , content, code_identifier])
-            else:
-                # If file exist, read in the content and either replace the code or append it
-                in_code_block = False
-                included_new = False
-                lineno = 0
-                with io.open(pypath,'r', encoding='utf-8') as f:
-                    for line in f:
-                        if line[-1] == "\n":
-                            line = line[:-1]
-                        lineno += 1
-                        if line.strip() == code_identifier:
-                            if included_new and not in_code_block:
-                                # we found a third one -> Error!
-                                raise Exception("Found more than two lines with identifiers in file '%s' in line %s. "
-                                    "Please fix the file so that the identifier is included exactly two times." % (pypath, lineno))
+            if debug:
+                print(f"Created new file: {pypath}")
+            new_content.extend([u'# -*- coding: utf-8 -*-\n\n', code_identifier , content, code_identifier])
+        else:
+            # If file exist, read in the content and either replace the code or append it
+            in_code_block = False
+            included_new = False
+            lineno = 0
+            with io.open(pypath,'r', encoding='utf-8') as f:
+                for line in f:
+                    if line[-1] == "\n":
+                        line = line[:-1]
+                    lineno += 1
+                    if line.strip() == code_identifier:
+                        if included_new and not in_code_block:
+                            # we found a third one -> Error!
+                            raise Exception("Found more than two lines with identifiers in file '%s' in line %s. "
+                                "Please fix the file so that the identifier is included exactly two times." % (pypath, lineno))
                             # Now we are either in the codeblock or just outside
                             # Switch the state to either "in our codeblock" or outside again
-                            in_code_block = True if not in_code_block else False
-                            if not included_new:
-                                # The code was not included yet, so add it here...
-                                # No need to add a code indentifier to the end as we just add the ending indentifier from the last 
-                                # time when the state is switched again.
-                                new_content.extend([code_identifier, content])
-                                included_new = True
-                        # This is something from other code cells, so just include it. All code 
-                        # "in_code_block" is replace, so do not include it
-                        if not in_code_block:
-                            new_content.append(line)
-                # And if we didn't include out code yet, lets append it to the end...
-                if not included_new:
-                    new_content.extend(["\n", code_identifier, content, code_identifier, "\n"])
-            
-            new_content = unicode(u'\n'.join(new_content))
-            
-            #Now write the complete code back to the file
-            self.ensure_dir(pypath)
-            with io.open(pypath,'w', encoding='utf-8') as f:
-                if not py3compat.PY3 and not isinstance(new_content, unicode):
-                    # this branch is likely only taken for JSON on Python 2
-                    new_content = py3compat.str_to_unicode(new_content)
-                f.write(new_content)
-                if debug:
-                    print("Wrote cell to file: %s" % pypath)
+                        in_code_block = not in_code_block
+                        if not included_new:
+                            # The code was not included yet, so add it here...
+                            # No need to add a code indentifier to the end as we just add the ending indentifier from the last 
+                            # time when the state is switched again.
+                            new_content.extend([code_identifier, content])
+                            included_new = True
+                    # This is something from other code cells, so just include it. All code 
+                    # "in_code_block" is replace, so do not include it
+                    if not in_code_block:
+                        new_content.append(line)
+            # And if we didn't include out code yet, lets append it to the end...
+            if not included_new:
+                new_content.extend(["\n", code_identifier, content, code_identifier, "\n"])
+
+        new_content = unicode(u'\n'.join(new_content))
+
+        #Now write the complete code back to the file
+        self.ensure_dir(pypath)
+        with io.open(pypath,'w', encoding='utf-8') as f:
+            if not py3compat.PY3 and not isinstance(new_content, unicode):
+                # this branch is likely only taken for JSON on Python 2
+                new_content = py3compat.str_to_unicode(new_content)
+            f.write(new_content)
+            if debug:
+                print(f"Wrote cell to file: {pypath}")
 
 
             

@@ -37,17 +37,15 @@ def download(fname, redownload=False):
     dest = os.path.join(here, fname)
     if os.path.exists(dest) and not redownload:
         return
-    url = 'https://raw.github.com/minrk/ipython_extensions/master/extensions/' + fname
-    print("Downloading %s to %s" % (url, dest))
-    
+    url = f'https://raw.github.com/minrk/ipython_extensions/master/extensions/{fname}'
+
+    print(f"Downloading {url} to {dest}")
+
     filein  = urlopen(url)
-    fileout = open(dest, "wb")
-    chunk = filein.read(1024)
-    while chunk:
-        fileout.write(chunk)
-        chunk = filein.read(1024)
-    filein.close()
-    fileout.close()
+    with open(dest, "wb") as fileout:
+        while chunk := filein.read(1024):
+            fileout.write(chunk)
+        filein.close()
 
 def load_file(fname, redownload=False):
     """load global variable from a file"""

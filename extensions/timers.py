@@ -81,16 +81,13 @@ class TimerMagics(Magics):
         ts = _format_time(dt)
         msg = "%8s" % ts
         if label:
-            msg = "%s: %s" % (label, msg)
-        print ('%s%s' % ('  ' * len(self.tics), msg))
+            msg = f"{label}: {msg}"
+        print(f"{'  ' * len(self.tics)}{msg}")
     
     @staticmethod
     def time():
         """time.clock seems preferable on Windows"""
-        if sys.platform.startswith('win'):
-            return time.clock()
-        else:
-            return time.time()
+        return time.clock() if sys.platform.startswith('win') else time.time()
     
 def load_ipython_extension(ip):
     """Load the extension in IPython."""

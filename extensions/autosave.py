@@ -68,18 +68,16 @@ class AutoSaveMagics(Magics):
         
         If no interval is specified, autosave is toggled.
         """
-        line = line.strip()
-        if not line:
-            # empty line, toggle
-            self.enabled = bool(1 - self.enabled)
-        else:
-            interval = int(line)
-            if interval:
+        if line := line.strip():
+            if interval := int(line):
                 self.enabled = True
                 self.interval = interval
             else:
                 self.enabled = False
-        
+
+        else:
+            # empty line, toggle
+            self.enabled = bool(1 - self.enabled)
         self.autosave_js(self.enabled * self.interval)
     
     @line_magic

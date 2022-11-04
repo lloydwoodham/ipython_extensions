@@ -44,7 +44,7 @@ class InspectorMagics(Magics):
         """publish the CSS for highlighting used in %showsrc
         
         Takes a """
-        
+
         name = line.strip()
         if not name:
             name = "default"

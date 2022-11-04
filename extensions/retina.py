@@ -26,8 +26,7 @@ def print_figure(fig, fmt='png', dpi=None):
                             bbox_inches='tight',
                             facecolor=fc, edgecolor=ec,
     )
-    data = bytes_io.getvalue()
-    return data
+    return bytes_io.getvalue()
 
 def png2x(fig):
     """render figure to 2x PNG via HTML"""

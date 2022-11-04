@@ -1,9 +1,9 @@
 def repr_request(r, p, cycle):
-    p.text('{} {}\n'.format(r.status_code, r.url))
+    p.text(f'{r.status_code} {r.url}\n')
     p.text('headers: ')
     for name in sorted(r.headers):
-        p.text('  {}: {}\n'.format(name, r.headers[name]))
-    p.text('\nbody ({}):\n'.format(r.headers.get('content-type', 'unknown')))
+        p.text(f'  {name}: {r.headers[name]}\n')
+    p.text(f"\nbody ({r.headers.get('content-type', 'unknown')}):\n")
     try:
         p.pretty(r.json())
     except ValueError:
